@@ -1,0 +1,39 @@
+@Metadata.layer: #CORE
+annotate entity ZSA_INVOICE_ITEM_C
+    with 
+{
+     @UI.facet: [{id:'item',
+               purpose: #STANDARD,
+               type: #IDENTIFICATION_REFERENCE,
+               label:'Item Details',
+               position: 10  }]
+               
+@UI.hidden: true
+InvoiceitemUuid;
+@UI.hidden: true
+CustomerUuid;
+@UI.hidden: true
+InvoiceUuid;
+@UI.lineItem: [{ position: 10, importance: #HIGH  }]
+@UI.identification: [{ position: 10, importance: #HIGH  }]
+LineItemId;
+@UI.lineItem: [{ position: 20, importance: #HIGH  }]
+@UI.identification: [{ position: 20, importance: #HIGH  }]
+InvoiceId;
+@UI.lineItem: [{ position: 30, importance: #HIGH  }]
+@UI.identification: [{ position: 30, importance: #HIGH  }]
+ProductId;
+@UI.lineItem: [{ position: 40, importance: #HIGH  }]
+@UI.identification: [{ position: 40, importance: #HIGH  }]
+Quantity;
+//UnitField;
+@UI.lineItem: [{ position: 50, importance: #HIGH  }]
+@UI.identification: [{ position: 50, importance: #HIGH  }]
+Price;
+//CurrencyCode;
+//LocalLastChangedAt;
+///* Associations */
+//_customer;
+//_invoice;
+    
+}

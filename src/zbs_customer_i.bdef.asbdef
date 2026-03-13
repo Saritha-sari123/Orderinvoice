@@ -1,0 +1,111 @@
+managed implementation in class zbp_bs_customer_i unique;
+strict ( 2 );
+with draft;
+define behavior for ZBS_CUSTOMER_I alias customer
+persistent table zbs_customer
+draft table zbs_customer_d
+lock master
+total etag LocalLastChangedAt
+
+authorization master ( global, instance )
+etag master LocalLastChangedAt
+{
+  create ( authorization : global );
+  update;
+  delete;
+  field ( numbering : managed, readonly ) CustomerUuid;
+  field (readonly) CustomerId;
+
+  association _invoice { create; with draft; }
+
+
+  draft action Edit;
+  draft action Discard;
+  draft action Resume;
+  draft action Activate optimized;
+  draft determine action Prepare;
+
+  determination set_customerid on save {create; update;}
+
+
+  mapping for zbs_customer
+    {
+      CustomerUuid       = customer_uuid;
+      CustomerId         = customer_id;
+      FirstName          = first_name;
+      PhoneNumber        = phone_number;
+      EmailAddress       = email_address;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+
+}
+
+define behavior for ZSA_INVOICE_I alias invoice
+persistent table zsa_invoice
+draft table zsa_invoice_d
+lock dependent by _customer
+authorization dependent by _customer
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) CustomerUuid , InvoiceId;
+  field ( numbering : managed, readonly ) InvoiceUuid;
+  association _customer {with draft;}
+  association _item { create; with draft;}
+
+ determination setinvoiceid on save {create; update;}
+
+
+  mapping for zsa_invoice
+    {
+      InvoiceUuid        = invoice_uuid;
+      CustomerUuid       = parent_uuid;
+      InvoiceId          = invoice_id;
+      CustomerId         = customer_id;
+      InvoiceDate        = invoice_date;
+      DueDate            = due_date;
+      TotalAmount        = total_amount;
+      CurrencyCode       = currency_code;
+      Status             = status;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+}
+
+
+define behavior for ZSA_INVOICE_ITEM_I alias item
+persistent table zsa_invoice_item
+draft table zsa_invce_item_d
+lock dependent by _customer
+authorization dependent by _customer
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) CustomerUuid, InvoiceUuid;
+  field ( numbering : managed, readonly ) InvoiceitemUuid;
+  association _customer{with draft;}
+  association _invoice{with draft;}
+
+ determination setlineitemid on save {create;}
+
+
+  mapping for zsa_invoice_item
+    {
+      InvoiceitemUuid    = invoiceitem_uuid;
+      CustomerUuid       = root_uuid;
+      InvoiceUuid        = parent_uuid;
+      LineItemId         = line_item_id;
+      InvoiceId          = invoice_id;
+      ProductId          = product_id;
+      Quantity           = quantity;
+      UnitField          = unit_field;
+      Price              = price;
+      CurrencyCode       = currency_code;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+}

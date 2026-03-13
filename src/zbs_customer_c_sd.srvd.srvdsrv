@@ -1,0 +1,6 @@
+@EndUserText.label: 'Service def for Consumption  Customer'
+define service ZBS_CUSTOMER_c_SD {
+  expose ZBS_CUSTOMER_C;
+  expose ZSA_INVOICE_C;
+  expose ZSA_INVOICE_ITEM_C;
+}
