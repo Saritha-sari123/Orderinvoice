@@ -169,71 +169,71 @@ RESULT DATA(invoices).
 *
 *ENDLOOP.
 
-  READ ENTITIES OF zbs_customer_I IN LOCAL MODE
-    ENTITY item
-    FIELDS ( Quantity Price )
-    WITH CORRESPONDING #( keys )
-    RESULT DATA(lt_items).
+    READ ENTITIES OF zbs_customer_I IN LOCAL MODE
+      ENTITY item
+      FIELDS ( Quantity Price )
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_items).
 
-  MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
-    ENTITY item
-    UPDATE FIELDS ( LineTotal )
-    WITH VALUE #(
-      FOR ls_item IN lt_items
-      (
-        %tky      = ls_item-%tky
-        LineTotal = ls_item-Quantity * ls_item-Price
-      )
-    ).
+    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
+      ENTITY item
+      UPDATE FIELDS ( LineTotal )
+      WITH VALUE #(
+        FOR ls_item IN lt_items
+        (
+          %tky      = ls_item-%tky
+          LineTotal = ls_item-Quantity * ls_item-Price
+        )
+      ).
   ENDMETHOD.
 
   METHOD update_invoice_total.
-  TYPES: BEGIN OF ty_inv_key,
-         InvoiceUuid TYPE zsa_invoice-invoice_uuid,
-       END OF ty_inv_key.
+    TYPES: BEGIN OF ty_inv_key,
+             InvoiceUuid TYPE zsa_invoice-invoice_uuid,
+           END OF ty_inv_key.
 
-DATA: lt_invoice_keys TYPE STANDARD TABLE OF ty_inv_key.
-   " Step 1: Get affected invoices
-  READ ENTITIES OF zbs_customer_I IN LOCAL MODE
-    ENTITY item
-    FIELDS ( InvoiceUuid )
-    WITH CORRESPONDING #( keys )
-    RESULT DATA(lt_items).
-
-  lt_invoice_keys = VALUE #(
-    FOR ls_item IN lt_items
-      ( InvoiceUuid = ls_item-InvoiceUuid )
-  ).
-
-  DELETE ADJACENT DUPLICATES FROM lt_invoice_keys.
-
-  LOOP AT lt_invoice_keys INTO DATA(ls_inv).
-
-    " Step 2: Read all items of this invoice
+    DATA: lt_invoice_keys TYPE STANDARD TABLE OF ty_inv_key.
+    " Step 1: Get affected invoices
     READ ENTITIES OF zbs_customer_I IN LOCAL MODE
-      ENTITY invoice BY \_item
-      FIELDS ( LineTotal )
-      WITH VALUE #(
-        ( InvoiceUuid = ls_inv-InvoiceUuid )
-      )
-      RESULT DATA(lt_all_items).
+      ENTITY item
+      FIELDS ( InvoiceUuid )
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_items).
 
-    " Step 3: Calculate sum
-    DATA(lv_total) = REDUCE #(
-      INIT x = 0
-      FOR ls IN lt_all_items
-      NEXT x = x + ls-LineTotal ).
+    lt_invoice_keys = VALUE #(
+      FOR ls_item IN lt_items
+        ( InvoiceUuid = ls_item-InvoiceUuid )
+    ).
 
-    " Step 4: Update invoice
-    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
-      ENTITY invoice
-      UPDATE FIELDS ( TotalAmount )
-      WITH VALUE #(
-        ( InvoiceUuid = ls_inv-InvoiceUuid
-          TotalAmount = lv_total )
-      ).
+    DELETE ADJACENT DUPLICATES FROM lt_invoice_keys.
 
-  ENDLOOP.
+    LOOP AT lt_invoice_keys INTO DATA(ls_inv).
+
+      " Step 2: Read all items of this invoice
+      READ ENTITIES OF zbs_customer_I IN LOCAL MODE
+        ENTITY invoice BY \_item
+        FIELDS ( LineTotal )
+        WITH VALUE #(
+          ( InvoiceUuid = ls_inv-InvoiceUuid )
+        )
+        RESULT DATA(lt_all_items).
+
+      " Step 3: Calculate sum
+      DATA(lv_total) = REDUCE #(
+        INIT x = 0
+        FOR ls IN lt_all_items
+        NEXT x = x + ls-LineTotal ).
+
+      " Step 4: Update invoice
+      MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
+        ENTITY invoice
+        UPDATE FIELDS ( TotalAmount )
+        WITH VALUE #(
+          ( InvoiceUuid = ls_inv-InvoiceUuid
+            TotalAmount = lv_total )
+        ).
+
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -245,6 +245,17 @@ CLASS lhc_invoice DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS setinvoiceid FOR DETERMINE ON SAVE
       IMPORTING keys FOR invoice~setinvoiceid.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR invoice RESULT result.
+
+    METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
+      IMPORTING REQUEST requested_authorizations FOR invoice RESULT result.
+
+    METHODS paid FOR MODIFY
+      IMPORTING keys FOR ACTION invoice~paid RESULT result.
+
+    METHODS unpaid FOR MODIFY
+      IMPORTING keys FOR ACTION invoice~unpaid RESULT result.
 
 ENDCLASS.
 
@@ -308,6 +319,33 @@ CLASS lhc_invoice IMPLEMENTATION.
 
 
 
+  ENDMETHOD.
+
+  METHOD get_instance_authorizations.
+  ENDMETHOD.
+
+  METHOD get_global_authorizations.
+  ENDMETHOD.
+
+  METHOD Paid.
+*    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
+*    ENTITY invoice
+*    UPDATE FIELDS ( Status )
+*    WITH VALUE #( FOR Key IN keys ( %tky = key-%tky
+*                                    Status = 'P' ) ).
+*
+*    READ ENTITIES OF zbs_customer_I IN LOCAL MODE
+*    ENTITY invoice
+*    ALL FIELDS WITH CORRESPONDING #( keys )
+*    RESULT DATA(invoices).
+*
+*    resUlt = VALUE #( FOR invoice IN invoices ( %tky = invoice-%tky
+*                                                %param = invoice ) ).
+
+
+  ENDMETHOD.
+
+  METHOD unpaid.
   ENDMETHOD.
 
 ENDCLASS.

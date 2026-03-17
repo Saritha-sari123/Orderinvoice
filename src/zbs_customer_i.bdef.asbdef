@@ -63,6 +63,8 @@ etag master LocalLastChangedAt
 
  determination setinvoiceid on save {create; update;}
 
+action Paid result [1] $self;
+action unpaid result [1]$self;
 
   mapping for zsa_invoice
     {

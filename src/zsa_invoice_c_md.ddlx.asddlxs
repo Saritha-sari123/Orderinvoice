@@ -19,8 +19,10 @@ annotate entity ZSA_INVOICE_C with
   InvoiceUuid;
   @UI.hidden: true
   CustomerUuid;
-  @UI.lineItem: [{position: 10, importance: #HIGH  }]
-  @UI.identification: [{position:10, importance: #HIGH  }]
+  @UI.lineItem: [{position: 10, importance: #HIGH  },
+  { type: #FOR_ACTION , dataAction: 'Paid ', label: 'PAID',  invocationGrouping: #CHANGE_SET }]
+  @UI.identification: [{position:10, importance: #HIGH },
+  { type: #FOR_ACTION , dataAction: 'Paid ', label: 'PAID',  invocationGrouping: #CHANGE_SET }]
   InvoiceId;
   @UI.lineItem: [{position: 20, importance: #HIGH  }]
   @UI.identification: [{position:20, importance: #HIGH  }]
