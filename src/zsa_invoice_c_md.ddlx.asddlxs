@@ -25,18 +25,21 @@ annotate entity ZSA_INVOICE_C with
   @UI.lineItem: [{position: 20, importance: #HIGH  }]
   @UI.identification: [{position:20, importance: #HIGH  }]
   CustomerId;
-  @UI.lineItem: [{position: 30, importance: #HIGH  }]
+  @UI.lineItem: [{position: 30, importance: #HIGH,label: 'Invoice Date'  }]
   @UI.identification: [{position:30, importance: #HIGH  }]
   InvoiceDate;
-  @UI.lineItem: [{position: 40, importance: #HIGH  }]
+  @UI.lineItem: [{position: 40, importance: #HIGH,label: 'Due Date'  }]
   @UI.identification: [{position:40, importance: #HIGH  }]
   DueDate;
   @UI.lineItem: [{position: 50, importance: #HIGH  }]
   @UI.identification: [{position:50, importance: #HIGH  }]
+  //  @Consumption.valueHelpDefinition: [{entity: { name: 'I_CurrencyStdVH' , element: 'Currency' } ,useForValidation: true }]
   TotalAmount;
-  //    CurrencyCode;
+  @Consumption.valueHelpDefinition: [{entity: { name: 'I_CurrencyStdVH' , element: 'Currency' } ,useForValidation: true }]
+  CurrencyCode;
   @UI.lineItem: [{position: 60, importance: #HIGH  }]
   @UI.identification: [{position:70, importance: #HIGH  }]
+
   Status;
   //    LocalLastChangedAt;
   //    /* Associations */

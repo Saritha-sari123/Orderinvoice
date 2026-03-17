@@ -26,10 +26,15 @@ ProductId;
 @UI.lineItem: [{ position: 40, importance: #HIGH  }]
 @UI.identification: [{ position: 40, importance: #HIGH  }]
 Quantity;
-//UnitField;
+ @Consumption.valueHelpDefinition: [{entity: { name: 'I_UnitOfMeasure', element: 'UnitOfMeasureISOCode' } ,useForValidation: true }]
+
+UnitField;
 @UI.lineItem: [{ position: 50, importance: #HIGH  }]
 @UI.identification: [{ position: 50, importance: #HIGH  }]
 Price;
+@UI.lineItem: [{ position: 60, importance: #HIGH  }]
+@UI.identification: [{ position: 60, importance: #HIGH  }]
+LineTotal;
 //CurrencyCode;
 //LocalLastChangedAt;
 ///* Associations */

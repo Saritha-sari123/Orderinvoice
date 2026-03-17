@@ -15,6 +15,7 @@ define view entity ZSA_INVOICE_ITEM_C as projection on ZSA_INVOICE_ITEM_I
     UnitField,
     @Semantics.amount.currencyCode: 'CurrencyCode'
     Price,
+    LineTotal,
     CurrencyCode,
     LocalLastChangedAt,
     /* Associations */

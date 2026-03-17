@@ -3,6 +3,7 @@
 {
 "FROM":
 [
+"/DMO/I_CUSTOMER",
 "ZBS_CUSTOMER_I"
 ],
 "ASSOCIATED":

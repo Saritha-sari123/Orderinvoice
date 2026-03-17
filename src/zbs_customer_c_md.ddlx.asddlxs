@@ -2,44 +2,45 @@
 @UI:{headerInfo:{ typeName: 'Customer',
                   typeNamePlural: 'Customers',
                   title:{ type: #STANDARD , value: 'CustomerId'}}}
-annotate entity ZBS_CUSTOMER_C
-    with 
+annotate entity ZBS_CUSTOMER_C with
 {
-@UI.facet: [{id: 'Customer',
-             purpose: #STANDARD,
-             type: #IDENTIFICATION_REFERENCE,
-             label: 'Customer Details',
-             position: 10   },
-             
-             { 
-             id: 'Invoice',
-             purpose: #STANDARD,
-             type: #LINEITEM_REFERENCE,
-             label: 'Invoice  Details',
-             targetElement: '_invoice',
-             position: 20
-             }                        
-             ]
- 
- @UI.hidden: true
- CustomerUuid;
-@UI.lineItem: [{position: 10 , importance: #HIGH  }]
-@UI.identification: [{ position: 10, importance: #HIGH  }]
- CustomerId;
- @UI.lineItem: [{position: 20 , importance: #HIGH  }]
-@UI.identification: [{ position: 20, importance: #HIGH  }]
- FirstName;
- @UI.lineItem: [{position: 30 , importance: #HIGH  }]
-@UI.identification: [{ position: 30, importance: #HIGH  }]
- PhoneNumber;
- @UI.lineItem: [{position: 40 , importance: #HIGH  }]
-@UI.identification: [{ position: 40, importance: #HIGH  }]
- EmailAddress;
-// LocalCreatedBy;
-// LocalCreatedAt;
-// LocalLastChangedBy;
-// LocalLastChangedAt;
-// LastChangedAt;
-// /* Associations */
-// _invoice;   
+  @UI.facet: [{id: 'Customer',
+               purpose: #STANDARD,
+               type: #IDENTIFICATION_REFERENCE,
+               label: 'Customer Details',
+               position: 10   },
+
+               {
+               id: 'Invoice',
+               purpose: #STANDARD,
+               type: #LINEITEM_REFERENCE,
+               label: 'Invoice  Details',
+               targetElement: '_invoice',
+               position: 20
+               }
+               ]
+
+  @UI.hidden: true
+  CustomerUuid;
+  @UI.lineItem: [{position: 10 , importance: #HIGH  }]
+  @UI.identification: [{ position: 10, importance: #HIGH  }]
+  CustomerId;
+  @UI.lineItem: [{position: 20 , importance: #HIGH  }]
+  @UI.identification: [{ position: 20, importance: #HIGH  }]
+  @Consumption.valueHelpDefinition: [{entity: { name: '/DMO/I_Customer_StdVH' , element: 'FirstName' } ,useForValidation: true }]
+  FirstName;
+  @UI.lineItem: [{position: 30 , importance: #HIGH  }]
+  @UI.identification: [{ position: 30, importance: #HIGH  }]
+
+  PhoneNumber;
+  @UI.lineItem: [{position: 40 , importance: #HIGH  }]
+  @UI.identification: [{ position: 40, importance: #HIGH  }]
+  EmailAddress;
+  // LocalCreatedBy;
+  // LocalCreatedAt;
+  // LocalLastChangedBy;
+  // LocalLastChangedAt;
+  // LastChangedAt;
+  // /* Associations */
+  // _invoice;
 }

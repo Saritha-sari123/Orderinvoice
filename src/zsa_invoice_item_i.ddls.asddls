@@ -18,6 +18,7 @@ define view entity ZSA_INVOICE_ITEM_I
       unit_field            as UnitField,
       @Semantics.amount.currencyCode: 'CurrencyCode'
       price                 as Price,
+      line_total as LineTotal,
       currency_code         as CurrencyCode,
       local_last_changed_at as LocalLastChangedAt,
       _invoice,

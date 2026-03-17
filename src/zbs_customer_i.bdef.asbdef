@@ -17,6 +17,7 @@ etag master LocalLastChangedAt
   field (readonly) CustomerId;
 
   association _invoice { create; with draft; }
+//  association _item { create; with draft; }
 
 
   draft action Edit;
@@ -28,13 +29,15 @@ etag master LocalLastChangedAt
   determination set_customerid on save {create; update;}
 
 
+
+
   mapping for zbs_customer
     {
       CustomerUuid       = customer_uuid;
       CustomerId         = customer_id;
       FirstName          = first_name;
-      PhoneNumber        = phone_number;
-      EmailAddress       = email_address;
+      PhoneNumber1        = phone_number;
+      EmailAddress1       = email_address;
       LocalCreatedBy     = local_created_by;
       LocalCreatedAt     = local_created_at;
       LocalLastChangedBy = local_last_changed_by;
@@ -53,7 +56,7 @@ etag master LocalLastChangedAt
 {
   update;
   delete;
-  field ( readonly ) CustomerUuid , InvoiceId;
+  field ( readonly ) CustomerUuid , InvoiceId, CustomerId;
   field ( numbering : managed, readonly ) InvoiceUuid;
   association _customer {with draft;}
   association _item { create; with draft;}
@@ -86,13 +89,18 @@ etag master LocalLastChangedAt
 {
   update;
   delete;
-  field ( readonly ) CustomerUuid, InvoiceUuid;
+  field ( readonly ) CustomerUuid, InvoiceUuid , LineItemId , LineTotal;
   field ( numbering : managed, readonly ) InvoiceitemUuid;
   association _customer{with draft;}
   association _invoice{with draft;}
 
  determination setlineitemid on save {create;}
 
+  determination calculate_item_total
+  on modify { field Quantity, Price; }
+
+  determination update_invoice_total
+    on save { create; update; delete; }
 
   mapping for zsa_invoice_item
     {
@@ -105,6 +113,7 @@ etag master LocalLastChangedAt
       Quantity           = quantity;
       UnitField          = unit_field;
       Price              = price;
+      LineTotal = line_total;
       CurrencyCode       = currency_code;
       LocalLastChangedAt = local_last_changed_at;
     }
