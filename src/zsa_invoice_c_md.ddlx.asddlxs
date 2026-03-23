@@ -20,9 +20,9 @@ annotate entity ZSA_INVOICE_C with
   @UI.hidden: true
   CustomerUuid;
   @UI.lineItem: [{position: 10, importance: #HIGH  },
-  { type: #FOR_ACTION , dataAction: 'Paid ', label: 'PAID',  invocationGrouping: #CHANGE_SET }]
+  { type: #FOR_ACTION , dataAction: 'Paid', label: 'Paid',  invocationGrouping: #CHANGE_SET }]
   @UI.identification: [{position:10, importance: #HIGH },
-  { type: #FOR_ACTION , dataAction: 'Paid ', label: 'PAID',  invocationGrouping: #CHANGE_SET }]
+  { type: #FOR_ACTION , dataAction: 'Paid', label: 'Paid',  invocationGrouping: #CHANGE_SET }]
   InvoiceId;
   @UI.lineItem: [{position: 20, importance: #HIGH  }]
   @UI.identification: [{position:20, importance: #HIGH  }]
@@ -35,10 +35,14 @@ annotate entity ZSA_INVOICE_C with
   DueDate;
   @UI.lineItem: [{position: 50, importance: #HIGH  }]
   @UI.identification: [{position:50, importance: #HIGH  }]
-  //  @Consumption.valueHelpDefinition: [{entity: { name: 'I_CurrencyStdVH' , element: 'Currency' } ,useForValidation: true }]
+//  @Consumption.valueHelpDefinition: [{entity: { name: 'I_CurrencyStdVH' , element: 'Currency' } ,useForValidation: true }]
   TotalAmount;
+//    @UI.lineItem: [{position: 50, importance: #HIGH  }]
+//  @UI.identification: [{position:50, importance: #HIGH  }]
   @Consumption.valueHelpDefinition: [{entity: { name: 'I_CurrencyStdVH' , element: 'Currency' } ,useForValidation: true }]
   CurrencyCode;
+
+
   @UI.lineItem: [{position: 60, importance: #HIGH  }]
   @UI.identification: [{position:70, importance: #HIGH  }]
 

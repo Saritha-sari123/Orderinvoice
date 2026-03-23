@@ -23,7 +23,7 @@ define behavior for ZSA_INVOICE_C alias invoice
   use update;
   use delete;
 
-  use association _customer{with  draft;}
+  use association _customer { with draft; }
   use association _item { create; with draft; }
 }
 
@@ -31,7 +31,8 @@ define behavior for ZSA_INVOICE_ITEM_C alias item
 {
   use update;
   use delete;
+//  use action Paid;
 
-  use association _customer{with draft;}
-  use association _invoice{with draft;}
+  use association _customer { with draft; }
+  use association _invoice { with draft; }
 }

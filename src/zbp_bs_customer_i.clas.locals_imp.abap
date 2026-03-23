@@ -8,6 +8,8 @@ CLASS lhc_item DEFINITION INHERITING FROM cl_abap_behavior_handler.
       IMPORTING keys FOR item~calculate_item_total.
     METHODS update_invoice_total FOR DETERMINE ON SAVE
       IMPORTING keys FOR item~update_invoice_total.
+    METHODS set_invoice_data FOR DETERMINE ON SAVE
+      IMPORTING keys FOR item~set_invoice_data.
 
 ENDCLASS.
 
@@ -147,27 +149,7 @@ RESULT DATA(invoices).
   ENDMETHOD.
 
   METHOD calculate_item_total.
-*  DATA lv_total TYPE p LENGTH 15 DECIMALS 2.
-*  READ ENTITIES OF zbs_customer_I IN LOCAL MODE
-*  ENTITY item
-*  FIELDS ( Quantity Price )
-*  WITH CORRESPONDING #( keys )
-*  RESULT DATA(lt_items).
-*
-*LOOP AT lt_items INTO DATA(ls_item).
-*
-*  lv_total = ls_item-Quantity * ls_item-Price.
-*
-*  MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
-*    ENTITY item
-*    UPDATE
-*    FIELDS ( Price )
-*    WITH VALUE #( (
-*        %tky = ls_item-%tky
-*        Price = lv_total
-*    ) ).
-*
-*ENDLOOP.
+
 
     READ ENTITIES OF zbs_customer_I IN LOCAL MODE
       ENTITY item
@@ -237,6 +219,12 @@ RESULT DATA(invoices).
 
   ENDMETHOD.
 
+  METHOD set_invoice_data.
+
+
+
+  ENDMETHOD.
+
 ENDCLASS.
 
 CLASS lhc_invoice DEFINITION INHERITING FROM cl_abap_behavior_handler.
@@ -256,6 +244,10 @@ CLASS lhc_invoice DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS unpaid FOR MODIFY
       IMPORTING keys FOR ACTION invoice~unpaid RESULT result.
+    METHODS setoverallstatus FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR invoice~setoverallstatus.
+*    METHODS get_instance_features FOR INSTANCE FEATURES
+*      IMPORTING keys REQUEST requested_features FOR invoice RESULT result.
 
 ENDCLASS.
 
@@ -328,25 +320,46 @@ CLASS lhc_invoice IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD Paid.
-*    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
-*    ENTITY invoice
-*    UPDATE FIELDS ( Status )
-*    WITH VALUE #( FOR Key IN keys ( %tky = key-%tky
-*                                    Status = 'P' ) ).
-*
-*    READ ENTITIES OF zbs_customer_I IN LOCAL MODE
-*    ENTITY invoice
-*    ALL FIELDS WITH CORRESPONDING #( keys )
-*    RESULT DATA(invoices).
-*
-*    resUlt = VALUE #( FOR invoice IN invoices ( %tky = invoice-%tky
-*                                                %param = invoice ) ).
+    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
+    ENTITY invoice
+    UPDATE FIELDS ( Status )
+    WITH VALUE #( FOR key IN keys ( %tky = key-%tky
+                                     Status = 'P' ) ).
 
+    READ ENTITIES OF zbs_customer_I IN LOCAL MODE
+    ENTITY invoice
+    ALL FIELDS WITH CORRESPONDING #( keys )
+   RESULT DATA(invoices).
+
+
+    result = VALUE #( FOR invoice IN invoices ( %tky = invoice-%tky
+                                                %param = invoice ) ).
 
   ENDMETHOD.
 
   METHOD unpaid.
   ENDMETHOD.
+
+  METHOD setoverallstatus.
+
+    READ ENTITIES OF zbs_customer_I IN LOCAL MODE
+    ENTITY invoice
+    FIELDS ( Status )
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(lt_status).
+
+    DELETE  lt_status WHERE Status IS NOT INITIAL.
+
+    MODIFY ENTITIES OF zbs_customer_I IN LOCAL MODE
+    ENTITY invoice
+    UPDATE FIELDS ( Status )
+    WITH VALUE #( FOR ls_status IN lt_status
+    ( %tky = ls_status-%tky
+    Status = 'O' ) ).
+  ENDMETHOD.
+
+*  METHOD get_instance_features.
+*  ENDMETHOD.
 
 ENDCLASS.
 
